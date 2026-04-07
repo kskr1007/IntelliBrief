@@ -24,10 +24,13 @@ fun LoginScreen(
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE) }
 
+    var rememberMe by remember { mutableStateOf(prefs.getBoolean("remember_me", false)) }
     var username by remember {
-        mutableStateOf(prefs.getString("username", "") ?: "")
+        mutableStateOf(if (rememberMe) prefs.getString("username", "") ?: "" else "")
     }
-    var password by remember { mutableStateOf("") }
+    var password by remember {
+        mutableStateOf(if (rememberMe) prefs.getString("password", "") ?: "" else "")
+    }
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -72,7 +75,6 @@ fun LoginScreen(
                 onValueChange = {
                     username = it
                     error = null
-                    prefs.edit { putString("username", it) }
                 },
                 label = { Text("ID-SERIAL / EMAIL") },
                 singleLine = true,
@@ -103,6 +105,26 @@ fun LoginScreen(
                 )
             )
 
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "REMEMBER CREDENTIALS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(Modifier.width(8.dp))
+                Switch(
+                    checked = rememberMe,
+                    onCheckedChange = { rememberMe = it },
+                    enabled = !isLoading
+                )
+            }
+
             if (error != null) {
                 Text(
                     text = error!!,
@@ -112,7 +134,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
 
             if (isLoading) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -124,6 +146,16 @@ fun LoginScreen(
                         scope.launch {
                             try {
                                 AuthRepository.login(username, password)
+                                prefs.edit {
+                                    putBoolean("remember_me", rememberMe)
+                                    if (rememberMe) {
+                                        putString("username", username)
+                                        putString("password", password)
+                                    } else {
+                                        remove("username")
+                                        remove("password")
+                                    }
+                                }
                                 onLoginSuccess()
                             } catch (e: Exception) {
                                 error = AuthRepository.getHumanReadableError(e)
