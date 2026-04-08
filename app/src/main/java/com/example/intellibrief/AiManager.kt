@@ -26,12 +26,12 @@ class AiManager(private val apiKey: String) {
         val articlesText = articles.joinToString("\n") { "- ${it.title} (Source: ${it.domain})" }
 
         // prompts for AI
-        val systemPrompt = "You are a CIA intelligence analyst preparing a Daily Brief for the President of the United States. STYLE: Professional, clinical, urgent but measured. Address 'Mr. President'."
+        val systemPrompt = "Act like you are a CIA intelligence analyst preparing a Daily Brief for the President of the United States. STYLE: Professional, clinical, urgent but measured."
         val userPrompt = """
             Based on the following news events, create a concise, high-level intelligence brief.
             
             FORMAT:
-            1. Start with a "TOP SECRET // EYES ONLY" header.
+            1. Start with a "TOP SECRET" header.
             2. Provide a 2-3 sentence executive summary of the global threat landscape.
             3. For each of the key events listed below, provide a 1-sentence assessment and assign a "Threat Score" from 1-10 (10 being critical).
             
@@ -41,7 +41,7 @@ class AiManager(private val apiKey: String) {
         // I used AI to generate this section
         // these are AI settings for groq
         val jsonBody = JSONObject().apply {
-            put("model", "llama-3.3-70b-versatile")
+            put("model", "openai/gpt-oss-20b")
             put("messages", JSONArray().apply {
                 put(JSONObject().apply {
                     put("role", "system")

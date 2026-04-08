@@ -30,14 +30,22 @@ class GdeltManager {
 
         // only events related to natsec
         val tightQuery = "(" +
-                "theme:MILITARY_POSTURE OR " +
                 "theme:MILITARY OR " +
+                "theme:MILITARY_POSTURE OR " +
                 "theme:ARMED_CONFLICT OR " +
                 "theme:TERROR OR " +
-                "theme:SANCTIONS OR " +
+                "theme:TERRORISM OR " +
                 "theme:CYBER_ATTACK OR " +
-                "theme:SURVEILLANCE" +
-                ") sourcelang:eng"
+                "theme:CYBER_SECURITY OR " +
+                "theme:SURVEILLANCE OR " +
+                "theme:SANCTIONS OR " +
+                "theme:DIPLOMACY OR " +
+                "theme:NEGOTIATIONS OR " +
+                "theme:PEACE_TREATY OR " +
+                "theme:INTELLIGENCE" +
+                ") " +
+                "sourcelang:eng " +
+                "tone>-5"
 
         urlBuilder.addQueryParameter("query", tightQuery)
         urlBuilder.addQueryParameter("mode", "artlist")

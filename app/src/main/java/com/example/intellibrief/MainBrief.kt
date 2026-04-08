@@ -25,6 +25,9 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +44,11 @@ fun MainBriefScreen(onLoadEvents: () -> Unit) {
     var isLoading by remember { mutableStateOf(true) }
     // boolean for loading symbol for ai summary on/off
     var isAiLoading by remember { mutableStateOf(false) }
+
+    // Get current date
+    val currentDate = remember {
+        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date())
+    }
 
     // run the request on a different thread
     LaunchedEffect(Unit) {
@@ -68,7 +76,7 @@ fun MainBriefScreen(onLoadEvents: () -> Unit) {
             TopAppBar(
                 title = { 
                     Text(
-                        "INTELLIGENCE BRIEF", 
+                        "INTELLIGENCE BRIEF - $currentDate",
                         fontWeight = FontWeight.Black,
                         style = MaterialTheme.typography.titleLarge
                     ) 
