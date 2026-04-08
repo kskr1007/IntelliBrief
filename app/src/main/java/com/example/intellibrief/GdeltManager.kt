@@ -36,14 +36,12 @@ class GdeltManager {
                 "theme:TERROR OR " +
                 "theme:SANCTIONS OR " +
                 "theme:CYBER_ATTACK OR " +
-                "theme:SURVEILLANCE OR " +
-                "theme:REBELLION OR " +
-                "theme:DIPLOMACY" +
+                "theme:SURVEILLANCE" +
                 ") sourcelang:eng"
 
         urlBuilder.addQueryParameter("query", tightQuery)
         urlBuilder.addQueryParameter("mode", "artlist")
-        urlBuilder.addQueryParameter("maxrecords", "20")
+        urlBuilder.addQueryParameter("maxrecords", "10") // Limited to top 10
         urlBuilder.addQueryParameter("timespan", "24h")
         urlBuilder.addQueryParameter("sort", "datedesc")
         urlBuilder.addQueryParameter("format", "json")
@@ -94,6 +92,7 @@ class GdeltManager {
                         )
                     )
                 }
+                // used AI to generate a trail of error logging for gdelt
                 Log.d("GdeltManager", "Successfully parsed ${articlesList.size} articles")
                 return articlesList
             } else if (response.code == 429) {
