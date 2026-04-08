@@ -6,7 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,14 +28,13 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainBriefScreen() {
+fun MainBriefScreen(onLoadEvents: () -> Unit) {
     val context = LocalContext.current
     // connect to the gdelt manager class
     val gdeltManager = remember { GdeltManager() }
     //connect to groq manager
     val aiManager = remember { AiManager(apiKey = com.example.intellibrief.BuildConfig.GROQ_API_KEY) }
-    // articles list that will be populated by the request
-    var articles by remember { mutableStateOf<List<GdeltArticle>>(emptyList()) }
+    
     // ai summary that will be populated by the groq request
     var aiSummary by remember { mutableStateOf<String?>(null) }
     // boolean for loading symbol on/off
@@ -46,9 +47,8 @@ fun MainBriefScreen() {
         withContext(Dispatchers.IO) {
             val result = gdeltManager.getLatestEvents()
             withContext(Dispatchers.Main) {
-                articles = result
                 isLoading = false
-                if (articles.isNotEmpty()) {
+                if (result.isNotEmpty()) {
                     isAiLoading = true
                 }
             }
@@ -81,26 +81,99 @@ fun MainBriefScreen() {
         },
         containerColor = Color(0xFF121212) // Dark background for CIA feel
     ) { paddingValues ->
-        // for laoding symbol
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Main content area with briefing
+            Box(modifier = Modifier.weight(1f)) {
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        AiBriefSection(aiSummary, isAiLoading)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Load Events Button at the bottom
+            Button(
+                onClick = onLoadEvents,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(4.dp),
+                enabled = !isLoading
+            ) {
+                Text(
+                    "LOAD SOURCE EVENTS",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventsListScreen(onBack: () -> Unit) {
+    val gdeltManager = remember { GdeltManager() }
+    var articles by remember { mutableStateOf<List<GdeltArticle>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            val result = gdeltManager.getLatestEvents()
+            withContext(Dispatchers.Main) {
+                articles = result
+                isLoading = false
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("SOURCE EVENTS", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        // Using a simple text-based back button for now
+                        Text("<", color = Color.White, modifier = Modifier.padding(8.dp))
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
+                )
+            )
+        },
+        containerColor = Color(0xFF121212)
+    ) { paddingValues ->
         if (isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = Color.White)
-            }
-        }
-        // if nothing was returned from gdelt
-        else if (articles.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("No critical events identified.", color = Color.Gray)
             }
         } else {
             LazyColumn(
@@ -110,12 +183,6 @@ fun MainBriefScreen() {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // call the AI briefing fun, to display the summary
-                item {
-                    AiBriefSection(aiSummary, isAiLoading)
-                }
-
-                // call the EventCard fun for each article in the list
                 items(articles) { article ->
                     EventCard(article)
                 }

@@ -53,7 +53,18 @@ fun Navigate() {
             )
         }
         composable("main_brief") {
-            MainBriefScreen()
+            MainBriefScreen(
+                onLoadEvents = {
+                    navController.navigate("events_list")
+                }
+            )
+        }
+        composable("events_list") {
+            EventsListScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
@@ -62,6 +73,6 @@ fun Navigate() {
 @Composable
 fun GreetingPreview() {
     IntelliBriefTheme {
-        MainBriefScreen()
+        MainBriefScreen(onLoadEvents = {})
     }
 }
