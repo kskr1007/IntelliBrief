@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".EventWebActivity"
+            android:exported="false"
+            android:label="Event Source"
+            android:theme="@style/Theme.IntelliBrief" />
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.example.intellibrief
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -305,18 +306,36 @@ fun EventCard(article: GdeltArticle) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = article.domain.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = article.seenDate.take(8),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.DarkGray
-                    )
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = article.domain.uppercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = article.seenDate.take(8),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.DarkGray
+                        )
+                    }
+
+                    // Save Button - currently incomplete
+                    OutlinedButton(
+                        onClick = {
+                            // TODO: Implement save functionality
+                            Toast.makeText(context, "Save feature coming soon", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier.height(32.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                    ) {
+                        Text("SAVE", fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+                    }
                 }
             }
         }

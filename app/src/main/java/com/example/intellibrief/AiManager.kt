@@ -39,7 +39,7 @@ class AiManager(private val apiKey: String) {
             $articlesText
         """.trimIndent()
         // I used AI to generate this section
-        // these are AI settings for groq
+        // this is the json body being sent to groq
         val jsonBody = JSONObject().apply {
             put("model", "openai/gpt-oss-20b")
             put("messages", JSONArray().apply {
@@ -73,7 +73,8 @@ class AiManager(private val apiKey: String) {
             val responseBody = response.body?.string()
             
             Log.d("AiManager", "Groq Response Code: $responseCode")
-            
+
+            // parsing groq response
             if (response.isSuccessful && responseBody != null) {
                 Log.d("AiManager", "Groq Response Body: $responseBody")
                 val jsonResponse = JSONObject(responseBody)

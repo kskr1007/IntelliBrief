@@ -28,7 +28,7 @@ class GdeltManager {
         val urlBuilder = "https://api.gdeltproject.org/api/v2/doc/doc".toHttpUrlOrNull()?.newBuilder()
             ?: return emptyList()
 
-        // only events related to natsec
+        // only events related to natsec should be queried
         val tightQuery = "(" +
                 "theme:MILITARY OR " +
                 "theme:MILITARY_POSTURE OR " +
