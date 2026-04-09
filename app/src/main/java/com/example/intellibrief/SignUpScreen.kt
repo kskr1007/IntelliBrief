@@ -24,15 +24,22 @@ fun SignUpScreen(
     onSignupSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
+    // email for signup
     var email by remember { mutableStateOf("") }
+    // password for signup
     var password by remember { mutableStateOf("") }
+    // confirmed password for signup
     var confirmPassword by remember { mutableStateOf("") }
+    // boolean for password visibility
     var passwordVisible by remember { mutableStateOf(false) }
+    // for error handling
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    // boolean for loading symbol
     var isLoading by remember { mutableStateOf(false) }
-
+    // for auth
     val scope = rememberCoroutineScope()
 
+    // Sign Up UI
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -156,6 +163,7 @@ fun SignUpScreen(
                     onClick = {
                         if (email.isBlank()) {
                             errorMessage = "ID CANNOT BE BLANK"
+                            // return@Button is used to exit the onCLick after an error is found
                             return@Button
                         }
                         if (password.length < 6) {
@@ -170,7 +178,9 @@ fun SignUpScreen(
                         isLoading = true
                         scope.launch {
                             try {
+                                // register in firebase
                                 AuthRepository.register(email, password)
+                                // move back to login
                                 onSignupSuccess()
                             } catch (e: Exception) {
                                 errorMessage = e.message ?: "REGISTRATION DENIED"
@@ -193,6 +203,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
+                // move back to login
                 onClick = onNavigateToLogin,
                 enabled = !isLoading
             ) {

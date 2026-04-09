@@ -1,6 +1,10 @@
 package com.example.intellibrief
 
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,17 +26,54 @@ fun LoginScreen(
     onNavigateToSignup: () -> Unit
 ) {
     val context = LocalContext.current
+    // for local data saving
     val prefs = remember { context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE) }
-
+    // remember me boolean
+    var rememberMe by remember { mutableStateOf(prefs.getBoolean("remember_me", false)) }
+    // username for login
     var username by remember {
-        mutableStateOf(prefs.getString("username", "") ?: "")
+        mutableStateOf(if (rememberMe) prefs.getString("username", "") ?: "" else "")
     }
-    var password by remember { mutableStateOf("") }
+    // password for login
+    var password by remember {
+        mutableStateOf(if (rememberMe) prefs.getString("password", "") ?: "" else "")
+    }
+    // boolean for loading symbol
     var isLoading by remember { mutableStateOf(false) }
+    // for error handling
     var error by remember { mutableStateOf<String?>(null) }
-
+    // for auth
     val scope = rememberCoroutineScope()
 
+    // Sensor req: Shake to clear password
+    DisposableEffect(Unit) {
+        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        val sensorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                    val x = event.values[0]
+                    val y = event.values[1]
+                    val z = event.values[2]
+                    val magnitude = kotlin.math.sqrt(x * x + y * y + z * z)
+                    if (magnitude > 20f) { // Shake threshold
+                        password = ""
+                    }
+                }
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+
+        sensorManager.registerListener(sensorListener, accelerometer, SensorManager.SENSOR_DELAY_UI)
+
+        onDispose {
+            sensorManager.unregisterListener(sensorListener)
+        }
+    }
+
+    // Login UI
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -72,7 +113,6 @@ fun LoginScreen(
                 onValueChange = {
                     username = it
                     error = null
-                    prefs.edit { putString("username", it) }
                 },
                 label = { Text("ID-SERIAL / EMAIL") },
                 singleLine = true,
@@ -103,6 +143,26 @@ fun LoginScreen(
                 )
             )
 
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "REMEMBER CREDENTIALS",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(Modifier.width(8.dp))
+                Switch(
+                    checked = rememberMe,
+                    onCheckedChange = { rememberMe = it },
+                    enabled = !isLoading
+                )
+            }
+
             if (error != null) {
                 Text(
                     text = error!!,
@@ -112,7 +172,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
 
             if (isLoading) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -124,6 +184,20 @@ fun LoginScreen(
                         scope.launch {
                             try {
                                 AuthRepository.login(username, password)
+                                prefs.edit {
+                                    // saving remember me setting
+                                    putBoolean("remember_me", rememberMe)
+                                    if (rememberMe) {
+                                        // saving username and password if remember me is on
+                                        putString("username", username)
+                                        putString("password", password)
+                                    } else {
+                                        // no need to save
+                                        remove("username")
+                                        remove("password")
+                                    }
+                                }
+                                // navigate to main brief
                                 onLoginSuccess()
                             } catch (e: Exception) {
                                 error = AuthRepository.getHumanReadableError(e)
@@ -132,6 +206,7 @@ fun LoginScreen(
                             }
                         }
                     },
+                    // make sure button is enabled only if username and password are not empty
                     enabled = username.isNotBlank() && password.isNotBlank(),
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = MaterialTheme.shapes.small,
@@ -147,6 +222,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
+                // go to sign up activity
                 onClick = onNavigateToSignup,
                 enabled = !isLoading
             ) {

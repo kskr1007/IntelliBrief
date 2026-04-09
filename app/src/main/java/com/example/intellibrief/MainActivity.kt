@@ -4,13 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,12 +25,16 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Navigate() {
     val navController = rememberNavController()
+    
+    // saved articles and summary to preserve data between screens
+    var savedArticles by remember { mutableStateOf<List<GdeltArticle>>(emptyList()) }
+    var savedAiSummary by remember { mutableStateOf<String?>(null) }
 
     NavHost(navController, startDestination = "login") {
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("home") {
+                    navController.navigate("main_brief") {
                         popUpTo("login") { inclusive = true }
                     }
                 },
@@ -57,26 +55,28 @@ fun Navigate() {
                 }
             )
         }
-        composable("home") {
-            HomeScreen()
+
+        composable("main_brief") {
+            val context = androidx.compose.ui.platform.LocalContext.current
+            MainBriefScreen(
+                articles = savedArticles,
+                aiSummary = savedAiSummary,
+                onDataFetched = { articles, summary ->
+                    // save the articles
+                    savedArticles = articles
+                    // save to AI summary
+                    savedAiSummary = summary
+                },
+                // using intents to pass already loaded articles to the EventsActivity
+                onLoadEvents = {
+                    val intent = android.content.Intent(context, EventsActivity::class.java).apply {
+                        putExtra("articles", ArrayList(savedArticles))
+                    }
+                    context.startActivity(intent)
+                }
+            )
         }
     }
 }
 
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Hello, welcome to the home screen!")
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    IntelliBriefTheme {
-        HomeScreen()
-    }
-}
