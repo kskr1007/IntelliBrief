@@ -26,21 +26,26 @@ fun LoginScreen(
     onNavigateToSignup: () -> Unit
 ) {
     val context = LocalContext.current
+    // for local data saving
     val prefs = remember { context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE) }
-
+    // remember me boolean
     var rememberMe by remember { mutableStateOf(prefs.getBoolean("remember_me", false)) }
+    // username for login
     var username by remember {
         mutableStateOf(if (rememberMe) prefs.getString("username", "") ?: "" else "")
     }
+    // password for login
     var password by remember {
         mutableStateOf(if (rememberMe) prefs.getString("password", "") ?: "" else "")
     }
+    // boolean for loading symbol
     var isLoading by remember { mutableStateOf(false) }
+    // for error handling
     var error by remember { mutableStateOf<String?>(null) }
-
+    // for auth
     val scope = rememberCoroutineScope()
 
-    // Shake to clear password
+    // Sensor req: Shake to clear password
     DisposableEffect(Unit) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -68,6 +73,7 @@ fun LoginScreen(
         }
     }
 
+    // Login UI
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -179,15 +185,19 @@ fun LoginScreen(
                             try {
                                 AuthRepository.login(username, password)
                                 prefs.edit {
+                                    // saving remember me setting
                                     putBoolean("remember_me", rememberMe)
                                     if (rememberMe) {
+                                        // saving username and password if remember me is on
                                         putString("username", username)
                                         putString("password", password)
                                     } else {
+                                        // no need to save
                                         remove("username")
                                         remove("password")
                                     }
                                 }
+                                // navigate to main brief
                                 onLoginSuccess()
                             } catch (e: Exception) {
                                 error = AuthRepository.getHumanReadableError(e)
@@ -196,6 +206,7 @@ fun LoginScreen(
                             }
                         }
                     },
+                    // make sure button is enabled only if username and password are not empty
                     enabled = username.isNotBlank() && password.isNotBlank(),
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = MaterialTheme.shapes.small,
@@ -211,6 +222,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
+                // go to sign up activity
                 onClick = onNavigateToSignup,
                 enabled = !isLoading
             ) {

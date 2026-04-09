@@ -25,9 +25,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventWebActivity"
+            android:name=".EventsActivity"
             android:exported="false"
-            android:label="Event Source"
+            android:label="Source Events"
             android:theme="@style/Theme.IntelliBrief" />
     </application>
 

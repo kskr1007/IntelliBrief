@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
-import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class GdeltManager {
     private val okHttpClient: OkHttpClient
@@ -20,107 +20,97 @@ class GdeltManager {
 
         okHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
+    // get latest events from gdelt
     fun getLatestEvents(): List<GdeltArticle> {
-        // building gdelt http request
+        return fetchWithRetry(3)
+    }
+
+    // I used AI for this function because of the GDELT rate limiting.
+    // This function will retry the request up to 3 times if it fails.
+    private fun fetchWithRetry(maxRetries: Int): List<GdeltArticle> {
+        var currentAttempt = 0
+        while (currentAttempt < maxRetries) {
+            // call gdelt api
+            val result = executeRequest()
+            if (result.isNotEmpty()) return result
+            currentAttempt++
+            if (currentAttempt < maxRetries) {
+                Log.d("GdeltManager", "Retrying GDELT request (Attempt ${currentAttempt + 1})...")
+                Thread.sleep(2000)
+            }
+        }
+        return emptyList()
+    }
+
+    private fun executeRequest(): List<GdeltArticle> {
+        // building gdelt https request
         val urlBuilder = "https://api.gdeltproject.org/api/v2/doc/doc".toHttpUrlOrNull()?.newBuilder()
             ?: return emptyList()
 
-        // only events related to natsec should be queried
-        val tightQuery = "(" +
-                "theme:MILITARY OR " +
-                "theme:MILITARY_POSTURE OR " +
-                "theme:ARMED_CONFLICT OR " +
-                "theme:TERROR OR " +
-                "theme:TERRORISM OR " +
-                "theme:CYBER_ATTACK OR " +
-                "theme:CYBER_SECURITY OR " +
-                "theme:SURVEILLANCE OR " +
-                "theme:SANCTIONS OR " +
-                "theme:DIPLOMACY OR " +
-                "theme:NEGOTIATIONS OR " +
-                "theme:PEACE_TREATY OR " +
-                "theme:INTELLIGENCE" +
-                ") " +
-                "sourcelang:eng " +
-                "tone>-5"
+        // topics concerning nat sec
+        val query = "(theme:MILITARY OR theme:TERRORISM OR theme:CYBER_ATTACK OR theme:INTELLIGENCE) sourcelang:eng"
 
-        urlBuilder.addQueryParameter("query", tightQuery)
+        // add in query parameters
+        urlBuilder.addQueryParameter("query", query)
         urlBuilder.addQueryParameter("mode", "artlist")
-        urlBuilder.addQueryParameter("maxrecords", "10") // Limited to top 10
+        urlBuilder.addQueryParameter("maxrecords", "10")
         urlBuilder.addQueryParameter("timespan", "24h")
         urlBuilder.addQueryParameter("sort", "datedesc")
         urlBuilder.addQueryParameter("format", "json")
 
-        // final url
+        // make the final url a string
         val url = urlBuilder.build().toString()
+        Log.d("GdeltManager", "Executing request: $url")
 
-        Log.d("GdeltManager", "Executing request with tightened scope to: $url")
-
-        // had to add this to bypass some rate limit errors
+        // send request
         val request = Request.Builder()
             .url(url)
-            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-            .header("Accept", "application/json, text/plain, */*")
-            .header("Accept-Language", "en-US,en;q=0.9")
-            .header("Cache-Control", "no-cache")
-            .header("Pragma", "no-cache")
+            .header("User-Agent", "Mozilla/5.0")
+            .header("Accept", "application/json")
             .get()
             .build()
 
         try {
+            // get response
             val response = okHttpClient.newCall(request).execute()
+            // get response body
             val responseBody = response.body?.string()
 
-            // parse response for articles
             if (response.isSuccessful && !responseBody.isNullOrEmpty()) {
+                // create articles list
                 val articlesList = mutableListOf<GdeltArticle>()
-                
-                val json = try {
-                    JSONObject(responseBody)
-                } catch (e: Exception) {
-                    Log.e("GdeltManager", "Failed to parse GDELT response as JSON: ${e.message}")
-                    Log.d("GdeltManager", "Raw response: $responseBody")
-                    return emptyList()
-                }
+                val json = JSONObject(responseBody)
+                // look for articles field
+                val articles = json.optJSONArray("articles") ?: return emptyList()
 
-                val articles = json.optJSONArray("articles")
-                // if no articles found
-                if (articles == null) {
-                    Log.w("GdeltManager", "No 'articles' array found in JSON response")
-                    return emptyList()
-                }
-
-                // add each article to total list
+                // for all 10 articles...
                 for (i in 0 until articles.length()) {
                     val currentArticle = articles.getJSONObject(i)
                     articlesList.add(
+                        // add the article as a GDELT Article object with all the fields
                         GdeltArticle(
                             title = currentArticle.optString("title", "No Title"),
                             url = currentArticle.optString("url", ""),
                             socialImage = if (currentArticle.isNull("socialimage")) null else currentArticle.optString("socialimage"),
                             seenDate = currentArticle.optString("seendate", ""),
-                            domain = currentArticle.optString("domain", ""),
-                            sourceCountry = if (currentArticle.isNull("sourcecountry")) null else currentArticle.optString("sourcecountry")
+                            domain = currentArticle.optString("domain", "")
                         )
                     )
                 }
-                // used AI to generate a trail of error logging for gdelt
-                Log.d("GdeltManager", "Successfully parsed ${articlesList.size} articles")
+                // return the articles list
                 return articlesList
-            } else if (response.code == 429) {
-                Log.e("GdeltManager", "RATE LIMITED (429): GDELT is blocking the request. Try again later.")
-            } else {
-                Log.e("GdeltManager", "Request failed with code: ${response.code}")
-                Log.d("GdeltManager", "Error body: $responseBody")
             }
-        } catch (e: IOException) {
-            Log.e("GdeltManager", "Network error fetching GDELT data", e)
+            // GDELT has strict rate limiting, so this catch block reports the error
         } catch (e: Exception) {
-            Log.e("GdeltManager", "Parsing error", e)
+            Log.e("GdeltManager", "Request failed: ${e.message}")
         }
+        // if failed, return empty list
         return emptyList()
     }
 }
