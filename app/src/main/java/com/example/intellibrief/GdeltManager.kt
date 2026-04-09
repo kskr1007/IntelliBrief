@@ -77,7 +77,14 @@ class GdeltManager {
             // parse response for articles
             if (response.isSuccessful && !responseBody.isNullOrEmpty()) {
                 val articlesList = mutableListOf<GdeltArticle>()
-                val json = JSONObject(responseBody)
+                
+                val json = try {
+                    JSONObject(responseBody)
+                } catch (e: Exception) {
+                    Log.e("GdeltManager", "Failed to parse GDELT response as JSON: ${e.message}")
+                    Log.d("GdeltManager", "Raw response: $responseBody")
+                    return emptyList()
+                }
 
                 val articles = json.optJSONArray("articles")
                 // if no articles found

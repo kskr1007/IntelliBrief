@@ -41,7 +41,7 @@ class AiManager(private val apiKey: String) {
         // I used AI to generate this section
         // this is the json body being sent to groq
         val jsonBody = JSONObject().apply {
-            put("model", "openai/gpt-oss-20b")
+            put("model", "llama3-8b-8192")
             put("messages", JSONArray().apply {
                 put(JSONObject().apply {
                     put("role", "system")
@@ -77,9 +77,25 @@ class AiManager(private val apiKey: String) {
             // parsing groq response
             if (response.isSuccessful && responseBody != null) {
                 Log.d("AiManager", "Groq Response Body: $responseBody")
-                val jsonResponse = JSONObject(responseBody)
-                val choices = jsonResponse.getJSONArray("choices")
-                val content = choices.getJSONObject(0).getJSONObject("message").getString("content")
+                val jsonResponse = try {
+                    JSONObject(responseBody)
+                } catch (e: Exception) {
+                    Log.e("AiManager", "Failed to parse Groq response as JSON: ${e.message}")
+                    return@withContext "Error: Received invalid response from AI service."
+                }
+                
+                val choices = jsonResponse.optJSONArray("choices")
+                if (choices == null || choices.length() == 0) {
+                    Log.e("AiManager", "No choices returned in Groq response")
+                    return@withContext "Error: AI service returned no results."
+                }
+                
+                val content = choices.getJSONObject(0).optJSONObject("message")?.optString("content")
+                if (content == null) {
+                    Log.e("AiManager", "No content found in Groq response message")
+                    return@withContext "Error: AI response was empty."
+                }
+
                 Log.d("AiManager", "Extracted Content: $content")
                 content
             } else {
