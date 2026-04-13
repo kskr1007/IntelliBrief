@@ -29,6 +29,11 @@
             android:exported="false"
             android:label="Source Events"
             android:theme="@style/Theme.IntelliBrief" />
+        <activity
+            android:name=".SavedEventsActivity"
+            android:exported="false"
+            android:label="Saved Events"
+            android:theme="@style/Theme.IntelliBrief" />
     </application>
 
 </manifest>

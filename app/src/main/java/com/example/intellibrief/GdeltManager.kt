@@ -8,6 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
+// Complexity #1 req: GDELT api call
 class GdeltManager {
     private val okHttpClient: OkHttpClient
 

@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">IntelliBrief</string>
+
+    <!-- Login Screen -->
+    <string name="personnel_login">PERSONNEL LOGIN</string>
+    <string name="central_intelligence_access">CENTRAL INTELLIGENCE ACCESS</string>
+    <string name="id_serial_email">ID-SERIAL / EMAIL</string>
+    <string name="security_passphrase">SECURITY PASSPHRASE</string>
+    <string name="remember_credentials">REMEMBER CREDENTIALS</string>
+    <string name="authorize">AUTHORIZE</string>
+    <string name="unregistered_request_clearance">UNREGISTERED? REQUEST CLEARANCE</string>
+
+    <!-- Sign Up Screen -->
+    <string name="personnel_registration">PERSONNEL REGISTRATION</string>
+    <string name="request_security_clearance">REQUEST SECURITY CLEARANCE</string>
+    <string name="assigned_email_id">ASSIGNED EMAIL / ID</string>
+    <string name="confirm_passphrase">CONFIRM PASSPHRASE</string>
+    <string name="create_file">CREATE FILE</string>
+    <string name="already_registered_authenticate">ALREADY REGISTERED? AUTHENTICATE HERE</string>
+    <string name="id_cannot_be_blank">ID CANNOT BE BLANK</string>
+    <string name="minimum_6_characters">MINIMUM 6 CHARACTERS</string>
+    <string name="mismatched_passphrases">MISMATCHED PASSPHRASES</string>
+    <string name="registration_denied">REGISTRATION DENIED</string>
+
+    <!-- Main Brief Screen -->
+    <string name="intelligence_brief">INTELLIGENCE BRIEF</string>
+    <string name="load_source_events">LOAD SOURCE EVENTS</string>
+    <string name="top_secret_noforn">TOP SECRET // NOFORN</string>
+    <string name="executive_summary">EXECUTIVE SUMMARY</string>
+    <string name="field_recommendations">FIELD RECOMMENDATIONS</string>
+    <string name="internal_use_only">INTERNAL USE ONLY</string>
+    <string name="establishing_secure_channel">ESTABLISHING SECURE CHANNEL...</string>
+    <string name="signal_lost">SIGNAL LOST. RE-AUTHORIZE CONNECTION.</string>
 </resources>

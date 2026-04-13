@@ -10,6 +10,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 
+// Complexity #2: Groq api call
 class AiManager(private val apiKey: String) {
     // OkHttpClient is used for making network requests to the Groq API
     private val client = OkHttpClient()
