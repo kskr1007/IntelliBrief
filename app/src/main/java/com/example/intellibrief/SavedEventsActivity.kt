@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +50,7 @@ class SavedEventsActivity : ComponentActivity() {
 @Composable
 fun SavedEventsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
+    val failedToLoadMessage = stringResource(R.string.failed_to_load)
     val savedEvents = remember { mutableStateListOf<GdeltArticle>() }
     var isLoading by remember { mutableStateOf(true) }
     
@@ -80,7 +82,7 @@ fun SavedEventsScreen(onBack: () -> Unit) {
 
             override fun onCancelled(error: DatabaseError) {
                 isLoading = false
-                Toast.makeText(context, "Failed to load data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, failedToLoadMessage, Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -102,7 +104,7 @@ fun SavedEventsScreen(onBack: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "SAVED EVENTS",
+                        stringResource(R.string.saved_events),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -123,7 +125,7 @@ fun SavedEventsScreen(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No saved events found", color = Color.Gray)
+                Text(stringResource(R.string.no_saved_events), color = Color.Gray)
             }
         } else {
             LazyColumn(

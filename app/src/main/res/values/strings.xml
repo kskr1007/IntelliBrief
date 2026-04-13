@@ -9,6 +9,7 @@
     <string name="remember_credentials">REMEMBER CREDENTIALS</string>
     <string name="authorize">AUTHORIZE</string>
     <string name="unregistered_request_clearance">UNREGISTERED? REQUEST CLEARANCE</string>
+    <string name="login_icon_desc">Login Icon</string>
 
     <!-- Sign Up Screen -->
     <string name="personnel_registration">PERSONNEL REGISTRATION</string>
@@ -21,6 +22,8 @@
     <string name="minimum_6_characters">MINIMUM 6 CHARACTERS</string>
     <string name="mismatched_passphrases">MISMATCHED PASSPHRASES</string>
     <string name="registration_denied">REGISTRATION DENIED</string>
+    <string name="signup_icon_desc">Sign Up Icon</string>
+    <string name="reg_error_prefix">REG_ERROR: %1$s</string>
 
     <!-- Main Brief Screen -->
     <string name="intelligence_brief">INTELLIGENCE BRIEF</string>
@@ -31,4 +34,24 @@
     <string name="internal_use_only">INTERNAL USE ONLY</string>
     <string name="establishing_secure_channel">ESTABLISHING SECURE CHANNEL...</string>
     <string name="signal_lost">SIGNAL LOST. RE-AUTHORIZE CONNECTION.</string>
+
+    <!-- Events Screen -->
+    <string name="source_events">SOURCE EVENTS</string>
+    <string name="saved">SAVED</string>
+    <string name="event_saved">Event Saved!</string>
+    <string name="please_login_to_save">Please login to save events</string>
+    <string name="save_action">SAVE</string>
+
+    <!-- Saved Events Screen -->
+    <string name="saved_events">SAVED EVENTS</string>
+    <string name="no_saved_events">No saved events found</string>
+    <string name="failed_to_load">Failed to load data</string>
+
+    <!-- Auth Errors -->
+    <string name="error_no_account">No account found with this email.</string>
+    <string name="error_invalid_credentials">Incorrect password or malformed email.</string>
+    <string name="error_email_collision">This email is already registered.</string>
+    <string name="error_weak_password">Password is too weak. Use at least 6 characters.</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_unexpected">An unexpected error occurred. Access Denied.</string>
 </resources>

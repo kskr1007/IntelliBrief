@@ -1,5 +1,6 @@
 package com.example.intellibrief
 
+import android.content.Context
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -27,14 +28,14 @@ object AuthRepository {
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
 
-    fun getHumanReadableError(e: Exception): String {
+    fun getHumanReadableError(context: Context, e: Exception): String {
         return when (e) {
-            is FirebaseAuthInvalidUserException -> "No account found with this email."
-            is FirebaseAuthInvalidCredentialsException -> "Incorrect password or malformed email."
-            is FirebaseAuthUserCollisionException -> "This email is already registered."
-            is FirebaseAuthWeakPasswordException -> "Password is too weak. Use at least 6 characters."
-            is FirebaseNetworkException -> "Network error. Please check your connection."
-            else -> e.localizedMessage ?: "An unexpected error occurred. Access Denied."
+            is FirebaseAuthInvalidUserException -> context.getString(R.string.error_no_account)
+            is FirebaseAuthInvalidCredentialsException -> context.getString(R.string.error_invalid_credentials)
+            is FirebaseAuthUserCollisionException -> context.getString(R.string.error_email_collision)
+            is FirebaseAuthWeakPasswordException -> context.getString(R.string.error_weak_password)
+            is FirebaseNetworkException -> context.getString(R.string.error_network)
+            else -> e.localizedMessage ?: context.getString(R.string.error_unexpected)
         }
     }
 }

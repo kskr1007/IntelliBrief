@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">IntelliBrief</string>
+    <!-- Used AI to create string resources for all hardcoded strings -->
+    <!-- Login Screen -->
+    <string name="personnel_login">INICIO DE SESIÓN DE PERSONAL</string>
+    <string name="central_intelligence_access">ACCESO A INTELIGENCIA CENTRAL</string>
+    <string name="id_serial_email">ID-SERIAL / CORREO ELECTRÓNICO</string>
+    <string name="security_passphrase">FRASE DE SEGURIDAD</string>
+    <string name="remember_credentials">RECORDAR CREDENCIALES</string>
+    <string name="authorize">AUTORIZAR</string>
+    <string name="unregistered_request_clearance">¿NO REGISTRADO? SOLICITAR AUTORIZACIÓN</string>
+    <string name="login_icon_desc">Icono de inicio de sesión</string>
+
+    <!-- Sign Up Screen -->
+    <string name="personnel_registration">REGISTRO DE PERSONAL</string>
+    <string name="request_security_clearance">SOLICITAR AUTORIZACIÓN DE SEGURIDAD</string>
+    <string name="assigned_email_id">CORREO ASIGNADO / ID</string>
+    <string name="confirm_passphrase">CONFIRMAR FRASE DE SEGURIDAD</string>
+    <string name="create_file">CREAR ARCHIVO</string>
+    <string name="already_registered_authenticate">¿YA REGISTRADO? AUTENTICAR AQUÍ</string>
+    <string name="id_cannot_be_blank">EL ID NO PUEDE ESTAR VACÍO</string>
+    <string name="minimum_6_characters">MÍNIMO 6 CARACTERES</string>
+    <string name="mismatched_passphrases">LAS FRASES DE SEGURIDAD NO COINCIDEN</string>
+    <string name="registration_denied">REGISTRO DENEGADO</string>
+    <string name="signup_icon_desc">Icono de registro</string>
+    <string name="reg_error_prefix">REG_ERROR: %1$s</string>
+
+    <!-- Main Brief Screen -->
+    <string name="intelligence_brief">INFORME DE INTELIGENCIA</string>
+    <string name="load_source_events">CARGAR EVENTOS DE ORIGEN</string>
+    <string name="top_secret_noforn">TOP SECRET // NOFORN</string>
+    <string name="executive_summary">RESUMEN EJECUTIVO</string>
+    <string name="field_recommendations">RECOMENDACIONES DE CAMPO</string>
+    <string name="internal_use_only">SOLO PARA USO INTERNO</string>
+    <string name="establishing_secure_channel">ESTABLECIENDO CANAL SEGURO...</string>
+    <string name="signal_lost">SEÑAL PERDIDA. REAUTORIZAR CONEXIÓN.</string>
+
+    <!-- Events Screen -->
+    <string name="source_events">EVENTOS DE ORIGEN</string>
+    <string name="saved">GUARDADO</string>
+    <string name="event_saved">¡Evento guardado!</string>
+    <string name="please_login_to_save">Por favor, inicie sesión para guardar eventos</string>
+    <string name="save_action">GUARDAR</string>
+
+    <!-- Saved Events Screen -->
+    <string name="saved_events">EVENTOS GUARDADOS</string>
+    <string name="no_saved_events">No se encontraron eventos guardados</string>
+    <string name="failed_to_load">Error al cargar datos</string>
+
+    <!-- Auth Errors -->
+    <string name="error_no_account">No se encontró ninguna cuenta con este correo.</string>
+    <string name="error_invalid_credentials">Contraseña incorrecta o correo mal formado.</string>
+    <string name="error_email_collision">Este correo ya está registrado.</string>
+    <string name="error_weak_password">La contraseña es demasiado débil. Use al menos 6 caracteres.</string>
+    <string name="error_network">Error de red. Por favor, compruebe su conexión.</string>
+    <string name="error_unexpected">Ocurrió un error inesperado. Acceso denegado.</string>
+</resources>

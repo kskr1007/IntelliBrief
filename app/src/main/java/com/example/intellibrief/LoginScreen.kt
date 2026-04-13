@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -87,7 +88,7 @@ fun LoginScreen(
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.outline_local_police_24),
-                contentDescription = "Login Icon",
+                contentDescription = stringResource(R.string.login_icon_desc),
                 modifier = Modifier.size(100.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -95,13 +96,13 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "PERSONNEL LOGIN",
+                text = stringResource(R.string.personnel_login),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
 
             Text(
-                text = "CENTRAL INTELLIGENCE ACCESS",
+                text = stringResource(R.string.central_intelligence_access),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -114,7 +115,7 @@ fun LoginScreen(
                     username = it
                     error = null
                 },
-                label = { Text("ID-SERIAL / EMAIL") },
+                label = { Text(stringResource(R.string.id_serial_email)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading,
@@ -132,7 +133,7 @@ fun LoginScreen(
                     password = it
                     error = null
                 },
-                label = { Text("SECURITY PASSPHRASE") },
+                label = { Text(stringResource(R.string.security_passphrase)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
@@ -151,7 +152,7 @@ fun LoginScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "REMEMBER CREDENTIALS",
+                    text = stringResource(R.string.remember_credentials),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -200,7 +201,7 @@ fun LoginScreen(
                                 // navigate to main brief
                                 onLoginSuccess()
                             } catch (e: Exception) {
-                                error = AuthRepository.getHumanReadableError(e)
+                                error = AuthRepository.getHumanReadableError(context, e)
                             } finally {
                                 isLoading = false
                             }
@@ -215,7 +216,7 @@ fun LoginScreen(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("AUTHORIZE", fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                    Text(stringResource(R.string.authorize), fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                 }
             }
 
@@ -227,7 +228,7 @@ fun LoginScreen(
                 enabled = !isLoading
             ) {
                 Text(
-                    "UNREGISTERED? REQUEST CLEARANCE",
+                    stringResource(R.string.unregistered_request_clearance),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium
                 )

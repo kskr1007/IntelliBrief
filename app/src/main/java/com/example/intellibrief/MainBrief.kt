@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -90,7 +91,7 @@ fun MainBriefScreen(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Text(
-                        "INTELLIGENCE BRIEF - $currentDate",
+                        stringResource(R.string.intelligence_brief) + " - $currentDate",
                         fontWeight = FontWeight.Black,
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -143,7 +144,7 @@ fun MainBriefScreen(
                 enabled = !isLoading
             ) {
                 Text(
-                    "LOAD SOURCE EVENTS",
+                    stringResource(R.string.load_source_events),
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
@@ -171,7 +172,7 @@ fun AiBriefSection(summary: String?, isLoading: Boolean) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "TOP SECRET // NOFORN",
+                    stringResource(R.string.top_secret_noforn),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Red,
                     fontWeight = FontWeight.Bold,
@@ -196,7 +197,7 @@ fun AiBriefSection(summary: String?, isLoading: Boolean) {
 
                 // AI Summary Display
                 Text(
-                    "EXECUTIVE SUMMARY",
+                    stringResource(R.string.executive_summary),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
@@ -216,7 +217,7 @@ fun AiBriefSection(summary: String?, isLoading: Boolean) {
                 // Recommendations
                 if (recsText.isNotEmpty()) {
                     Text(
-                        "FIELD RECOMMENDATIONS",
+                        stringResource(R.string.field_recommendations),
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.Red,
                         fontWeight = FontWeight.Bold
@@ -242,14 +243,14 @@ fun AiBriefSection(summary: String?, isLoading: Boolean) {
                 }
             } else if (isLoading) {
                 Text(
-                    "ESTABLISHING SECURE CHANNEL...",
+                    stringResource(R.string.establishing_secure_channel),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     fontFamily = FontFamily.Monospace
                 )
             } else {
                 Text(
-                    "SIGNAL LOST. RE-AUTHORIZE CONNECTION.",
+                    stringResource(R.string.signal_lost),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     fontFamily = FontFamily.Monospace
@@ -259,7 +260,7 @@ fun AiBriefSection(summary: String?, isLoading: Boolean) {
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp)
             Text(
-                "INTERNAL USE ONLY",
+                stringResource(R.string.internal_use_only),
                 modifier = Modifier.padding(top = 8.dp).align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.DarkGray

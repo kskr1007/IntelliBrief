@@ -10,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,6 +26,12 @@ fun SignUpScreen(
     onSignupSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
+    val context = LocalContext.current
+    val idBlankError = stringResource(R.string.id_cannot_be_blank)
+    val minCharError = stringResource(R.string.minimum_6_characters)
+    val mismatchedError = stringResource(R.string.mismatched_passphrases)
+    val regDeniedError = stringResource(R.string.registration_denied)
+
     // email for signup
     var email by remember { mutableStateOf("") }
     // password for signup
@@ -53,7 +61,7 @@ fun SignUpScreen(
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.outline_local_police_24),
-                contentDescription = "Sign Up Icon",
+                contentDescription = stringResource(R.string.signup_icon_desc),
                 modifier = Modifier.size(100.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -61,13 +69,13 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "PERSONNEL REGISTRATION",
+                text = stringResource(R.string.personnel_registration),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
 
             Text(
-                text = "REQUEST SECURITY CLEARANCE",
+                text = stringResource(R.string.request_security_clearance),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -80,7 +88,7 @@ fun SignUpScreen(
                     email = it
                     errorMessage = null
                 },
-                label = { Text("ASSIGNED EMAIL / ID") },
+                label = { Text(stringResource(R.string.assigned_email_id)) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 singleLine = true,
@@ -99,7 +107,7 @@ fun SignUpScreen(
                     password = it
                     errorMessage = null
                 },
-                label = { Text("SECURITY PASSPHRASE") },
+                label = { Text(stringResource(R.string.security_passphrase)) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -132,7 +140,7 @@ fun SignUpScreen(
                     confirmPassword = it
                     errorMessage = null
                 },
-                label = { Text("CONFIRM PASSPHRASE") },
+                label = { Text(stringResource(R.string.confirm_passphrase)) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -147,7 +155,7 @@ fun SignUpScreen(
 
             if (errorMessage != null) {
                 Text(
-                    text = "REG_ERROR: $errorMessage",
+                    text = stringResource(R.string.reg_error_prefix, errorMessage!!),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(top = 8.dp)
@@ -162,16 +170,16 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         if (email.isBlank()) {
-                            errorMessage = "ID CANNOT BE BLANK"
+                            errorMessage = idBlankError
                             // return@Button is used to exit the onCLick after an error is found
                             return@Button
                         }
                         if (password.length < 6) {
-                            errorMessage = "MINIMUM 6 CHARACTERS"
+                            errorMessage = minCharError
                             return@Button
                         }
                         if (password != confirmPassword) {
-                            errorMessage = "MISMATCHED PASSPHRASES"
+                            errorMessage = mismatchedError
                             return@Button
                         }
 
@@ -183,7 +191,7 @@ fun SignUpScreen(
                                 // move back to login
                                 onSignupSuccess()
                             } catch (e: Exception) {
-                                errorMessage = e.message ?: "REGISTRATION DENIED"
+                                errorMessage = e.message ?: regDeniedError
                             } finally {
                                 isLoading = false
                             }
@@ -196,7 +204,7 @@ fun SignUpScreen(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("CREATE FILE", fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                    Text(stringResource(R.string.create_file), fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
                 }
             }
 
@@ -208,7 +216,7 @@ fun SignUpScreen(
                 enabled = !isLoading
             ) {
                 Text(
-                    "ALREADY REGISTERED? AUTHENTICATE HERE",
+                    stringResource(R.string.already_registered_authenticate),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium
                 )

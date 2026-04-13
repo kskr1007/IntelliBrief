@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -115,13 +116,13 @@ fun EventsListScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "SOURCE EVENTS",
+                        stringResource(R.string.source_events),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.weight(1f)
                     )
                     IconButton(onClick = onGoToSaved) {
-                        Text("SAVED", color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(stringResource(R.string.saved), color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                 }
             }
@@ -155,6 +156,8 @@ fun EventsListScreen(
 @Composable
 fun EventCard(article: GdeltArticle) {
     val context = LocalContext.current
+    val eventSavedMessage = stringResource(R.string.event_saved)
+    val loginToSaveMessage = stringResource(R.string.please_login_to_save)
 
     Card(
         modifier = Modifier
@@ -223,9 +226,9 @@ fun EventCard(article: GdeltArticle) {
                             val uid = FirebaseAuth.getInstance().currentUser?.uid
                             if (uid != null) {
                                 addEventToFirebase("users/$uid/saved_events", article)
-                                Toast.makeText(context, "Event Saved!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, eventSavedMessage, Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(context, "Please login to save events", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, loginToSaveMessage, Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.height(32.dp),
@@ -234,7 +237,7 @@ fun EventCard(article: GdeltArticle) {
                         border = androidx.compose.foundation.BorderStroke(1.dp, Color.Red),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
                     ) {
-                        Text("SAVE", fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+                        Text(stringResource(R.string.save_action), fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
                     }
                 }
             }
