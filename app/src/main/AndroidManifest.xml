@@ -34,6 +34,15 @@
             android:exported="false"
             android:label="Saved Events"
             android:theme="@style/Theme.IntelliBrief" />
+        <activity
+            android:name=".MapActivity"
+            android:exported="false"
+            android:label="Event Map"
+            android:theme="@style/Theme.IntelliBrief" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
     </application>
 
 </manifest>

@@ -136,7 +136,22 @@ fun SavedEventsScreen(onBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(savedEvents) { article ->
-                    SavedEventCard(article)
+                    SavedEventCard(article, onDelete = {
+                        // delete logic for firebase db
+                        if (uid != null) {
+                            val eventRef = Firebase.database.getReference("users/$uid/saved_events")
+                            // finding event using key
+                            eventRef.orderByChild("title").equalTo(article.title)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        for (child in snapshot.children) {
+                                            child.ref.removeValue()
+                                        }
+                                    }
+                                    override fun onCancelled(error: DatabaseError) {}
+                                })
+                        }
+                    })
                 }
             }
         }
@@ -145,8 +160,33 @@ fun SavedEventsScreen(onBack: () -> Unit) {
 
 // UI for saved event cards
 @Composable
-fun SavedEventCard(article: GdeltArticle) {
+fun SavedEventCard(article: GdeltArticle, onDelete: () -> Unit) {
     val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Event") },
+            text = { Text("Are you sure you want to remove this intelligence report from your database?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete()
+                    showDeleteDialog = false
+                }) {
+                    Text("DELETE", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("CANCEL")
+                }
+            },
+            containerColor = Color(0xFF1E1E1E),
+            titleContentColor = Color.White,
+            textContentColor = Color.Gray
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -205,6 +245,11 @@ fun SavedEventCard(article: GdeltArticle) {
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.DarkGray
                         )
+                    }
+
+                    // Delete Button
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Text("🗑️", fontSize = 18.sp)
                     }
                 }
             }

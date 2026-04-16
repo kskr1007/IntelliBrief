@@ -9,5 +9,7 @@ data class GdeltArticle(
     val url: String = "",
     val socialImage: String? = null,
     val seenDate: String = "",
-    val domain: String = ""
+    val domain: String = "",
+    val lat: Double? = null,
+    val lon: Double? = null
 ) : Serializable

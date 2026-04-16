@@ -53,6 +53,11 @@ class EventsActivity : ComponentActivity() {
                         // intent to go to saved events activity
                         val intent = Intent(this, SavedEventsActivity::class.java)
                         startActivity(intent)
+                    },
+                    // intent to go to map activity
+                    onGoToMap = {
+                        val intent = Intent(this, MapActivity::class.java)
+                        startActivity(intent)
                     }
                 )
             }
@@ -78,7 +83,8 @@ fun addEventToFirebase(fbRef: String, article: GdeltArticle) {
 fun EventsListScreen(
     initialArticles: List<GdeltArticle>,
     onBack: () -> Unit,
-    onGoToSaved: () -> Unit
+    onGoToSaved: () -> Unit,
+    onGoToMap: () -> Unit
 ) {
     // for connecting to gdelt api manager class
     val gdeltManager = remember { GdeltManager() }
@@ -123,6 +129,9 @@ fun EventsListScreen(
                     )
                     IconButton(onClick = onGoToSaved) {
                         Text(stringResource(R.string.saved), color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                    }
+                    IconButton(onClick = onGoToMap) {
+                        Text("MAP", color = Color.Cyan, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                 }
             }
