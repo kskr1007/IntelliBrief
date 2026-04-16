@@ -64,7 +64,7 @@ class EventsActivity : ComponentActivity() {
 fun addEventToFirebase(fbRef: String, article: GdeltArticle) {
     val database = Firebase.database
     val eventRef = database.getReference(fbRef)
-    val newEventRef = eventRef.push() // creates a unique ID
+    val newEventRef = eventRef.push()
     newEventRef.setValue(article)
         .addOnSuccessListener {
             Log.d("FirebaseWrite", "Event added successfully")
